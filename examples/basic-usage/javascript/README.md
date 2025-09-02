@@ -11,3 +11,9 @@
     ```
     npm start
     ```
+
+4. (Optional) Knowledge Base Management
+    `npm run ./dist/knowledge.js`
+   - Create, update, and delete knowledge bases.
+   - Manage documents within knowledge bases.
+   - Monitor document processing status.
