@@ -17,3 +17,8 @@
    - Create, update, and delete knowledge bases.
    - Manage documents within knowledge bases.
    - Monitor document processing status.
+
+## Others scenarios
+
+- Chat with file: `npm run file`
+<!-- - Chat with knowledge base: `npm run kb` -->

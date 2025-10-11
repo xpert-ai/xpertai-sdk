@@ -1,3 +1,6 @@
+import { ValuesStreamEvent } from "@langchain/langgraph-sdk";
+import chalk from "chalk";
+
 export enum ChatMessageTypeEnum {
   MESSAGE = 'message',
   EVENT = 'event'
@@ -26,4 +29,36 @@ export enum ChatMessageEventTypeEnum {
   ON_INTERRUPT = 'on_interrupt',
   ON_ERROR = 'on_error',
   ON_CHAT_EVENT = 'on_chat_event',
+}
+
+export async function printStreamMessages(stream: AsyncGenerator<ValuesStreamEvent<{type: ChatMessageTypeEnum}>>) {
+  for await (const chunk of stream) {
+    const data = <
+      {
+        type: ChatMessageTypeEnum;
+        event: ChatMessageEventTypeEnum;
+        data: string | { type: "text" | string; text?: string; data?: any };
+      }
+    >chunk.data;
+    // Output text messages only
+    if (data.type === ChatMessageTypeEnum.MESSAGE) {
+      if (typeof data.data === "string") {
+        process.stdout.write(data.data);
+      } else if (data.data.type === "text") {
+        process.stdout.write(data.data.text ?? "");
+      } else {
+        console.log(
+          chalk.blueBright(
+            `Type ${data.data.type} "${data.data.data.title ?? ""}": "${
+              data.data.data.message ?? ""
+            }"`
+          )
+        );
+      }
+    } else if (data.type === ChatMessageTypeEnum.EVENT) {
+      console.log(chalk.yellowBright(`Event:`, data.event));
+    } else {
+      throw new Error(chalk.red(`Types that should not exist: "${data.type}"`));
+    }
+  }
 }
